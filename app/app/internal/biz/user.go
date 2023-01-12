@@ -449,29 +449,28 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 	// 前四
 	userSortRecommendRewards, err = uuc.ubRepo.GetUserRewardRecommendSort(ctx)
-	if nil != err {
-		return nil, err
-	}
-	for _, userSortRecommendReward := range userSortRecommendRewards {
-		topUserIds = append(topUserIds, userSortRecommendReward.UserId)
-	}
-	topUsersReply = make([]*v1.UserInfoReply_List, 0)
-	if 0 < len(topUserIds) {
-		topUserRewards, err = uuc.ubRepo.GetUserRewardByUserIds(ctx, topUserIds...)
-		topUsers, err = uuc.repo.GetUserByUserIds(ctx, topUserIds...)
-		if nil != topUserRewards && nil != topUsers {
-			for _, userSortRecommendReward := range userSortRecommendRewards {
-				if _, ok := topUserRewards[userSortRecommendReward.UserId]; !ok {
-					continue
+	if 0 < len(userSortRecommendRewards) {
+		for _, userSortRecommendReward := range userSortRecommendRewards {
+			topUserIds = append(topUserIds, userSortRecommendReward.UserId)
+		}
+		topUsersReply = make([]*v1.UserInfoReply_List, 0)
+		if 0 < len(topUserIds) {
+			topUserRewards, err = uuc.ubRepo.GetUserRewardByUserIds(ctx, topUserIds...)
+			topUsers, err = uuc.repo.GetUserByUserIds(ctx, topUserIds...)
+			if nil != topUserRewards && nil != topUsers {
+				for _, userSortRecommendReward := range userSortRecommendRewards {
+					if _, ok := topUserRewards[userSortRecommendReward.UserId]; !ok {
+						continue
+					}
+					if _, ok := topUsers[userSortRecommendReward.UserId]; !ok {
+						continue
+					}
+					topUsersReply = append(topUsersReply, &v1.UserInfoReply_List{
+						Account:         topUsers[userSortRecommendReward.UserId].Address,
+						RecommendReward: fmt.Sprintf("%.2f", float64(userSortRecommendReward.Total)/float64(10000000000)),
+						Reward:          fmt.Sprintf("%.2f", float64(topUserRewards[userSortRecommendReward.UserId].Total)/float64(10000000000)),
+					})
 				}
-				if _, ok := topUsers[userSortRecommendReward.UserId]; !ok {
-					continue
-				}
-				topUsersReply = append(topUsersReply, &v1.UserInfoReply_List{
-					Account:         topUsers[userSortRecommendReward.UserId].Address,
-					RecommendReward: fmt.Sprintf("%.2f", float64(userSortRecommendReward.Total)/float64(10000000000)),
-					Reward:          fmt.Sprintf("%.2f", float64(topUserRewards[userSortRecommendReward.UserId].Total)/float64(10000000000)),
-				})
 			}
 		}
 	}
