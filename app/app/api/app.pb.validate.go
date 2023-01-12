@@ -601,6 +601,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for BalanceUsdt
 
+	// no validation rules for BalanceDhb
+
 	// no validation rules for InviteUrl
 
 	// no validation rules for InviteUserAddress
@@ -678,6 +680,12 @@ func (m *UserInfoReply) validate(all bool) error {
 	// no validation rules for LocationCount
 
 	// no validation rules for TodayReward
+
+	// no validation rules for RecommendTop
+
+	// no validation rules for LocationTotalCol
+
+	// no validation rules for LocationTotalRow
 
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)

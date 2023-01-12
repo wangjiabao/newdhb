@@ -401,6 +401,8 @@ components:
                     type: string
                 balanceUsdt:
                     type: string
+                balanceDhb:
+                    type: string
                 inviteUrl:
                     type: string
                 inviteUserAddress:
@@ -455,6 +457,12 @@ components:
                     type: integer
                     format: int64
                 todayReward:
+                    type: string
+                recommendTop:
+                    type: string
+                locationTotalCol:
+                    type: string
+                locationTotalRow:
                     type: string
         UserInfoReply_List:
             type: object

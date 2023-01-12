@@ -288,6 +288,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		recommendVipTotal        int64
 		feeDaily                 int64
 		locationTotal            int64
+		locationTotalCol         int64
+		locationTotalRow         int64
 		myCode                   string
 		inviteUserAddress        string
 		amount                   string
@@ -310,6 +312,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		locationCount            int64
 		userTodayRewardTotal     *UserSortRecommendReward
 		userTodayReward          int64
+		recommendTop             int64
 		err                      error
 	)
 
@@ -404,10 +407,19 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				recommendTotal += vUserReward.Amount
 			} else if "location" == vUserReward.Reason {
 				locationTotal += vUserReward.Amount
+				if "col" == vUserReward.LocationType {
+					locationTotalCol += vUserReward.Amount
+				} else if "row" == vUserReward.LocationType {
+					locationTotalRow += vUserReward.Amount
+				}
 			} else if "recommend_vip" == vUserReward.Reason {
 				recommendVipTotal += vUserReward.Amount
 			} else if "fee_daily" == vUserReward.Reason {
 				feeDaily += vUserReward.Amount
+			} else if "recommend_top" == vUserReward.Reason {
+				recommendTop += vUserReward.Amount
+			} else if "recommend_top" == vUserReward.Reason {
+				recommendTop += vUserReward.Amount
 			}
 		}
 	}
@@ -495,6 +507,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		RecommendVipTotal: fmt.Sprintf("%.2f", float64(recommendVipTotal)/float64(10000000000)),
 		FeeDaily:          fmt.Sprintf("%.2f", float64(feeDaily)/float64(10000000000)),
 		BalanceUsdt:       fmt.Sprintf("%.2f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
+		BalanceDhb:        fmt.Sprintf("%.2f", float64(userBalance.BalanceDhb)/float64(10000000000)),
 		InviteUrl:         encodeString,
 		InviteUserAddress: inviteUserAddress,
 		RecommendNum:      userInfo.HistoryRecommend,
@@ -514,6 +527,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		TopUser:           topUsersReply,
 		LocationCount:     locationCount,
 		TodayReward:       fmt.Sprintf("%.2f", float64(userTodayReward)/float64(10000000000)),
+		RecommendTop:      fmt.Sprintf("%.2f", float64(recommendTop)/float64(10000000000)),
+		LocationTotalCol:  fmt.Sprintf("%.2f", float64(locationTotalCol)/float64(10000000000)),
+		LocationTotalRow:  fmt.Sprintf("%.2f", float64(locationTotalRow)/float64(10000000000)),
 	}, nil
 }
 

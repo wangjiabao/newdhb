@@ -172,6 +172,7 @@ message UserInfoReply {
 	string status = 3;
 	string amount = 4;
 	string balanceUsdt = 5;
+	string balanceDhb = 6;
 	string inviteUrl = 7;
 	string inviteUserAddress = 8;
 	int64 recommendNum = 9;
@@ -200,6 +201,9 @@ message UserInfoReply {
 	}
 	int64 locationCount = 35;
 	string todayReward = 36;
+	string recommendTop = 37;
+	string locationTotalCol = 38;
+	string locationTotalRow = 39;
 }
 
 message RewardListRequest {
