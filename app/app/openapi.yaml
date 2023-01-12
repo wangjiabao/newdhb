@@ -451,6 +451,11 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/UserInfoReply_List'
+                locationCount:
+                    type: integer
+                    format: int64
+                todayReward:
+                    type: string
         UserInfoReply_List:
             type: object
             properties:

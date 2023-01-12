@@ -323,8 +323,17 @@ func (u *UserRepo) GetUserCount(ctx context.Context) (int64, error) {
 func (u *UserRepo) GetUserCountToday(ctx context.Context) (int64, error) {
 	var count int64
 	now := time.Now().UTC()
-	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, time.UTC)
+	var startDay int
+	var endDay int
+	if 16 <= now.Hour() {
+		startDay = now.Day()
+		endDay = now.Day() + 1
+	} else {
+		startDay = now.Day() - 1
+		endDay = now.Day()
+	}
+	todayStart := time.Date(now.Year(), now.Month(), startDay, 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(now.Year(), now.Month(), endDay, 15, 59, 59, 0, time.UTC)
 
 	if err := u.data.db.Table("user").
 		Where("created_at>=?", todayStart).Where("created_at<=?", todayEnd).Count(&count).Error; err != nil {
@@ -1395,6 +1404,40 @@ func (ub *UserBalanceRepo) GetUserRewardByUserIds(ctx context.Context, userIds .
 	}
 
 	return res, nil
+}
+
+// GetUserRewardTodayTotalByUserId .
+func (ub *UserBalanceRepo) GetUserRewardTodayTotalByUserId(ctx context.Context, userId int64) (*biz.UserSortRecommendReward, error) {
+	var total *UserSortRecommendReward
+
+	now := time.Now().UTC()
+	var startDay int
+	var endDay int
+	if 16 <= now.Hour() {
+		startDay = now.Day()
+		endDay = now.Day() + 1
+	} else {
+		startDay = now.Day() - 1
+		endDay = now.Day()
+	}
+	todayStart := time.Date(now.Year(), now.Month(), startDay, 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(now.Year(), now.Month(), endDay, 15, 59, 59, 0, time.UTC)
+
+	if err := ub.data.db.Table("reward").
+		Where("user_id=?", userId).
+		Where("created_at>=?", todayStart).Where("created_at<=?", todayEnd).
+		Select("sum(amount) as total, user_id").
+		Take(&total).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.NotFound("REWARD_NOT_FOUND", "reward not found")
+		}
+		return nil, errors.New(500, "REWARD ERROR", err.Error())
+	}
+
+	return &biz.UserSortRecommendReward{
+		UserId: total.UserId,
+		Total:  total.Total,
+	}, nil
 }
 
 // GetUserRewards .

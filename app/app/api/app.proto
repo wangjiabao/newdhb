@@ -198,7 +198,8 @@ message UserInfoReply {
 		string recommendReward = 2;
 		string reward = 3;
 	}
-
+	int64 locationCount = 35;
+	string todayReward = 36;
 }
 
 message RewardListRequest {

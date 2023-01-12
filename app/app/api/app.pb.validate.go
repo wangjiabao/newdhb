@@ -675,6 +675,10 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	}
 
+	// no validation rules for LocationCount
+
+	// no validation rules for TodayReward
+
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
 	}

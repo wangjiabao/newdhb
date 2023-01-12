@@ -145,6 +145,7 @@ type UserBalanceRepo interface {
 	GetSystemRewardUsdtTotal(ctx context.Context) (int64, error)
 	UpdateWithdrawAmount(ctx context.Context, id int64, status string, amount int64) (*Withdraw, error)
 	GetUserRewardRecommendSort(ctx context.Context) ([]*UserSortRecommendReward, error)
+	GetUserRewardTodayTotalByUserId(ctx context.Context, userId int64) (*UserSortRecommendReward, error)
 }
 
 type UserRecommendRepo interface {
@@ -306,6 +307,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		topUsers                 map[int64]*User
 		topUserIds               []int64
 		topUserRewards           map[int64]*UserSortRecommendReward
+		locationCount            int64
+		userTodayRewardTotal     *UserSortRecommendReward
+		userTodayReward          int64
 		err                      error
 	)
 
@@ -340,6 +344,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			}
 		}
 	}
+
+	locationCount = int64(len(locations))
 
 	// 提现记录
 	myWithdraws, err = uuc.ubRepo.GetWithdrawByUserId(ctx, myUser.ID)
@@ -475,6 +481,12 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		}
 	}
 
+	// 今日收益
+	userTodayRewardTotal, err = uuc.ubRepo.GetUserRewardTodayTotalByUserId(ctx, myUser.ID)
+	if nil != userTodayRewardTotal {
+		userTodayReward = userTodayRewardTotal.Total
+	}
+
 	return &v1.UserInfoReply{
 		Address:           myUser.Address,
 		Level:             userInfo.Vip,
@@ -500,6 +512,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		TotalDeposit:      fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
 		PoolAmount:        fmt.Sprintf("%.2f", float64(fee)/float64(10000000000)),
 		TopUser:           topUsersReply,
+		LocationCount:     locationCount,
+		TodayReward:       fmt.Sprintf("%.2f", float64(userTodayReward)/float64(10000000000)),
 	}, nil
 }
 
