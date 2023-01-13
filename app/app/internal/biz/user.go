@@ -308,7 +308,6 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		topUsersReply            []*v1.UserInfoReply_List
 		topUsers                 map[int64]*User
 		topUserIds               []int64
-		topUserRewards           map[int64]*UserSortRecommendReward
 		locationCount            int64
 		userTodayRewardTotal     *UserSortRecommendReward
 		userTodayReward          int64
@@ -473,20 +472,28 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		}
 		topUsersReply = make([]*v1.UserInfoReply_List, 0)
 		if 0 < len(topUserIds) {
-			topUserRewards, err = uuc.ubRepo.GetUserRewardByUserIds(ctx, topUserIds...)
 			topUsers, err = uuc.repo.GetUserByUserIds(ctx, topUserIds...)
-			if nil != topUserRewards && nil != topUsers {
-				for _, userSortRecommendReward := range userSortRecommendRewards {
-					if _, ok := topUserRewards[userSortRecommendReward.UserId]; !ok {
-						continue
-					}
+			if nil != topUsers {
+				for k, userSortRecommendReward := range userSortRecommendRewards {
 					if _, ok := topUsers[userSortRecommendReward.UserId]; !ok {
 						continue
 					}
+
+					var tmpAmount int64
+					if 0 == k {
+						tmpAmount = fee / 100 * 40
+					} else if 1 == k {
+						tmpAmount = fee / 100 * 30
+					} else if 2 == k {
+						tmpAmount = fee / 100 * 20
+					} else if 3 == k {
+						tmpAmount = fee / 100 * 10
+					}
+
 					topUsersReply = append(topUsersReply, &v1.UserInfoReply_List{
 						Account:         topUsers[userSortRecommendReward.UserId].Address,
 						RecommendReward: fmt.Sprintf("%.2f", float64(userSortRecommendReward.Total)/float64(10000000000)),
-						Reward:          fmt.Sprintf("%.2f", float64(topUserRewards[userSortRecommendReward.UserId].Total)/float64(10000000000)),
+						Reward:          fmt.Sprintf("%.2f", float64(tmpAmount)/float64(10000000000)),
 					})
 				}
 			}

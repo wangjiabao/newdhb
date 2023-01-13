@@ -323,17 +323,17 @@ func (u *UserRepo) GetUserCount(ctx context.Context) (int64, error) {
 func (u *UserRepo) GetUserCountToday(ctx context.Context) (int64, error) {
 	var count int64
 	now := time.Now().UTC()
-	var startDay int
-	var endDay int
-	if 16 <= now.Hour() {
-		startDay = now.Day()
-		endDay = now.Day() + 1
+	var startDate time.Time
+	var endDate time.Time
+	if 14 <= now.Hour() {
+		startDate = now
+		endDate = now.AddDate(0, 0, 1)
 	} else {
-		startDay = now.Day() - 1
-		endDay = now.Day()
+		startDate = now.AddDate(0, 0, -1)
+		endDate = now
 	}
-	todayStart := time.Date(now.Year(), now.Month(), startDay, 16, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(now.Year(), now.Month(), endDay, 15, 59, 59, 0, time.UTC)
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 15, 59, 59, 0, time.UTC)
 
 	if err := u.data.db.Table("user").
 		Where("created_at>=?", todayStart).Where("created_at<=?", todayEnd).Count(&count).Error; err != nil {
@@ -1411,17 +1411,17 @@ func (ub *UserBalanceRepo) GetUserRewardTodayTotalByUserId(ctx context.Context, 
 	var total *UserSortRecommendReward
 
 	now := time.Now().UTC()
-	var startDay int
-	var endDay int
-	if 16 <= now.Hour() {
-		startDay = now.Day()
-		endDay = now.Day() + 1
+	var startDate time.Time
+	var endDate time.Time
+	if 14 <= now.Hour() {
+		startDate = now
+		endDate = now.AddDate(0, 0, 1)
 	} else {
-		startDay = now.Day() - 1
-		endDay = now.Day()
+		startDate = now.AddDate(0, 0, -1)
+		endDate = now
 	}
-	todayStart := time.Date(now.Year(), now.Month(), startDay, 16, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(now.Year(), now.Month(), endDay, 15, 59, 59, 0, time.UTC)
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 15, 59, 59, 0, time.UTC)
 
 	if err := ub.data.db.Table("reward").
 		Where("user_id=?", userId).
@@ -1627,9 +1627,20 @@ func (ub UserBalanceRepo) GetUserBalanceRecordUserUsdtTotal(ctx context.Context,
 // GetUserBalanceRecordUsdtTotalToday .
 func (ub UserBalanceRepo) GetUserBalanceRecordUsdtTotalToday(ctx context.Context) (int64, error) {
 	var total UserBalanceTotal
+
 	now := time.Now().UTC()
-	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, time.UTC)
+	var startDate time.Time
+	var endDate time.Time
+	if 14 <= now.Hour() {
+		startDate = now
+		endDate = now.AddDate(0, 0, 1)
+	} else {
+		startDate = now.AddDate(0, 0, -1)
+		endDate = now
+	}
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 15, 59, 59, 0, time.UTC)
+
 	if err := ub.data.db.Table("user_balance_record").
 		Where("type=?", "deposit").
 		Where("coin_type=?", "usdt").
@@ -1678,8 +1689,17 @@ func (ub *UserBalanceRepo) GetUserRewardRecommendSort(ctx context.Context) ([]*b
 func (ub UserBalanceRepo) GetUserWithdrawUsdtTotalToday(ctx context.Context) (int64, error) {
 	var total UserBalanceTotal
 	now := time.Now().UTC()
-	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, time.UTC)
+	var startDate time.Time
+	var endDate time.Time
+	if 14 <= now.Hour() {
+		startDate = now
+		endDate = now.AddDate(0, 0, 1)
+	} else {
+		startDate = now.AddDate(0, 0, -1)
+		endDate = now
+	}
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 15, 59, 59, 0, time.UTC)
 	if err := ub.data.db.Table("user_balance_record").
 		Where("type=?", "withdraw").
 		Where("coin_type=?", "usdt").
