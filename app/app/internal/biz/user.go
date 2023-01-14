@@ -417,8 +417,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				feeDaily += vUserReward.Amount
 			} else if "recommend_top" == vUserReward.Reason {
 				recommendTop += vUserReward.Amount
-			} else if "recommend_top" == vUserReward.Reason {
-				recommendTop += vUserReward.Amount
+			} else if "recommend_vip_top" == vUserReward.Reason {
+				recommendVipTotal += vUserReward.Amount
 			}
 		}
 	}
