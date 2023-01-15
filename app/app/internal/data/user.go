@@ -1115,6 +1115,49 @@ func (ub *UserBalanceRepo) SystemWithdrawReward(ctx context.Context, amount int6
 	return nil
 }
 
+// GetSystemYesterdayDailyReward .
+func (ub *UserBalanceRepo) GetSystemYesterdayDailyReward(ctx context.Context) (*biz.Reward, error) {
+	var reward Reward
+
+	now := time.Now().UTC()
+	var startDate time.Time
+	var endDate time.Time
+	if 14 <= now.Hour() {
+		startDate = now
+		endDate = now.AddDate(0, 0, 1)
+	} else {
+		startDate = now.AddDate(0, 0, -1)
+		endDate = now
+	}
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 14, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 14, 0, 0, 0, time.UTC)
+
+	if err := ub.data.db.
+		Where("user_id=?", 999999999).
+		Where("created_at>=?", todayStart).
+		Where("created_at<?", todayEnd).
+		Where("type=?", "system_fee_daily").
+		Where("reason=?", "system_fee_daily").
+		Table("reward").First(&reward).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.NotFound("REWARD_NOT_FOUND", "reward not found")
+		}
+
+		return nil, errors.New(500, "REWARD ERROR", err.Error())
+	}
+	return &biz.Reward{
+		ID:               reward.ID,
+		UserId:           reward.UserId,
+		Amount:           reward.Amount,
+		BalanceRecordId:  reward.BalanceRecordId,
+		Type:             reward.Type,
+		TypeRecordId:     reward.TypeRecordId,
+		Reason:           reward.Reason,
+		ReasonLocationId: reward.ReasonLocationId,
+		LocationType:     reward.LocationType,
+	}, nil
+}
+
 // SystemFee .
 func (ub *UserBalanceRepo) SystemFee(ctx context.Context, amount int64, locationId int64) error {
 	var (

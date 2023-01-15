@@ -113,6 +113,7 @@ type UserBalanceRepo interface {
 	SystemWithdrawReward(ctx context.Context, amount int64, locationId int64) error
 	SystemReward(ctx context.Context, amount int64, locationId int64) error
 	SystemFee(ctx context.Context, amount int64, locationId int64) error
+	GetSystemYesterdayDailyReward(ctx context.Context) (*Reward, error)
 	UserFee(ctx context.Context, userId int64, amount int64) (int64, error)
 	RecommendWithdrawReward(ctx context.Context, userId int64, amount int64, locationId int64) (int64, error)
 	NormalRecommendReward(ctx context.Context, userId int64, amount int64, locationId int64) (int64, error)
@@ -309,6 +310,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		topUsers                 map[int64]*User
 		topUserIds               []int64
 		locationCount            int64
+		systemYesterdayreward    *Reward
 		userTodayRewardTotal     *UserSortRecommendReward
 		userTodayReward          int64
 		recommendTop             int64
@@ -460,6 +462,13 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	for _, userLocation := range userLocations {
 		fee += userLocation.CurrentMax / 5
 	}
+
+	// 昨日剩余全网手续费
+	systemYesterdayreward, _ = uuc.ubRepo.GetSystemYesterdayDailyReward(ctx)
+	if nil != systemYesterdayreward {
+		fee += systemYesterdayreward.Amount
+	}
+
 	if fee > 0 {
 		fee = fee / 10000 * 3 * 70
 	}
