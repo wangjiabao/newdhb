@@ -590,7 +590,7 @@ func (uuc *UserUseCase) RewardList(ctx context.Context, req *v1.RewardListReques
 				}
 
 				res.Rewards = append(res.Rewards, &v1.RewardListReply_List{
-					CreatedAt:      vUserReward.CreatedAt.Format("2006-01-02 15:04:05"),
+					CreatedAt:      vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
 					Amount:         fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 					LocationStatus: locations[vUserReward.ReasonLocationId].Status,
 					Type:           vUserReward.Type,
@@ -619,7 +619,7 @@ func (uuc *UserUseCase) RecommendRewardList(ctx context.Context, user *User) (*v
 	for _, vUserReward := range userRewards {
 		if "recommend" == vUserReward.Reason || "recommend_vip" == vUserReward.Reason {
 			res.Rewards = append(res.Rewards, &v1.RecommendRewardListReply_List{
-				CreatedAt: vUserReward.CreatedAt.Format("2006-01-02 15:04:05"),
+				CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
 				Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				Type:      vUserReward.Type,
 				Reason:    vUserReward.Reason,
@@ -647,7 +647,7 @@ func (uuc *UserUseCase) FeeRewardList(ctx context.Context, user *User) (*v1.FeeR
 	for _, vUserReward := range userRewards {
 		if "fee" == vUserReward.Reason {
 			res.Rewards = append(res.Rewards, &v1.FeeRewardListReply_List{
-				CreatedAt: vUserReward.CreatedAt.Format("2006-01-02 15:04:05"),
+				CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
 				Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 			})
 		}
@@ -674,7 +674,7 @@ func (uuc *UserUseCase) WithdrawList(ctx context.Context, user *User) (*v1.Withd
 
 	for _, v := range withdraws {
 		res.Withdraw = append(res.Withdraw, &v1.WithdrawListReply_List{
-			CreatedAt: v.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreatedAt: v.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
 			Amount:    fmt.Sprintf("%.2f", float64(v.RelAmount)/float64(10000000000)),
 			Status:    v.Status,
 			Type:      v.Type,
