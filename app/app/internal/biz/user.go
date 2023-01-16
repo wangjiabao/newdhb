@@ -310,6 +310,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		topUsers                 map[int64]*User
 		topUserIds               []int64
 		locationCount            int64
+		poolAmount               int64
 		systemYesterdayreward    *Reward
 		userTodayRewardTotal     *UserSortRecommendReward
 		userTodayReward          int64
@@ -470,6 +471,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	}
 
 	if fee > 0 {
+		poolAmount = fee / 100 * 3
 		fee = fee / 10000 * 3 * 70
 	}
 
@@ -539,7 +541,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		AmountB:           fmt.Sprintf("%.2f", float64(myLastLocationCurrent)/float64(10000000000)),
 		UserCount:         userCount,
 		TotalDeposit:      fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
-		PoolAmount:        fmt.Sprintf("%.2f", float64(fee)/float64(10000000000)),
+		PoolAmount:        fmt.Sprintf("%.2f", float64(poolAmount)/float64(10000000000)),
 		TopUser:           topUsersReply,
 		LocationCount:     locationCount,
 		TodayReward:       fmt.Sprintf("%.2f", float64(userTodayReward)/float64(10000000000)),
