@@ -205,6 +205,7 @@ message UserInfoReply {
 	string locationTotalCol = 38;
 	string locationTotalRow = 39;
 	string fybPrice = 40;
+	string fybRate = 41;
 }
 
 message RewardListRequest {

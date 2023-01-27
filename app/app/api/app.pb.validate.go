@@ -689,6 +689,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for FybPrice
 
+	// no validation rules for FybRate
+
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
 	}
