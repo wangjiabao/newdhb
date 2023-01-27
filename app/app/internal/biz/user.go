@@ -479,10 +479,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		rewardAmount = systemYesterdayreward.Amount
 	}
 
-	if fee > 0 {
-		poolAmount = fee/100*3 + rewardAmount
-		fee = (fee/100*3 + rewardAmount) / 100 * 70
-	}
+	poolAmount = fee/100*3 + rewardAmount
+	fee = (fee/100*3 + rewardAmount) / 100 * 70
 
 	// 前四
 	userSortRecommendRewards, err = uuc.ubRepo.GetUserRewardRecommendSort(ctx)
