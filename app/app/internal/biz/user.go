@@ -474,13 +474,14 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 	// 昨日剩余全网手续费
 	systemYesterdayreward, _ = uuc.ubRepo.GetSystemYesterdayDailyReward(ctx)
+	rewardAmount := int64(0)
 	if nil != systemYesterdayreward {
-		fee += systemYesterdayreward.Amount
+		rewardAmount = systemYesterdayreward.Amount
 	}
 
 	if fee > 0 {
-		poolAmount = fee / 100 * 3
-		fee = fee / 10000 * 3 * 70
+		poolAmount = fee/100*3 + rewardAmount
+		fee = (fee/100*3 + rewardAmount) / 100 * 70
 	}
 
 	// 前四
