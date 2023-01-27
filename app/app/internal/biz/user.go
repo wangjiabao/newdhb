@@ -315,6 +315,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		userTodayRewardTotal     *UserSortRecommendReward
 		userTodayReward          int64
 		recommendTop             int64
+		fybPrice                 string
 		err                      error
 	)
 
@@ -445,11 +446,14 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	}
 
 	// 配置
-	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count")
+	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count", "fyb_price")
 	if nil != configs {
 		for _, vConfig := range configs {
 			if "user_count" == vConfig.KeyName {
 				userCount = vConfig.Value
+			}
+			if "fyb_price" == vConfig.KeyName {
+				fybPrice = vConfig.Value
 			}
 		}
 	}
@@ -548,6 +552,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		RecommendTop:      fmt.Sprintf("%.2f", float64(recommendTop)/float64(10000000000)),
 		LocationTotalCol:  fmt.Sprintf("%.2f", float64(locationTotalCol)/float64(10000000000)),
 		LocationTotalRow:  fmt.Sprintf("%.2f", float64(locationTotalRow)/float64(10000000000)),
+		FybPrice:          fybPrice,
 	}, nil
 }
 
