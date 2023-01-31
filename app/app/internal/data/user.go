@@ -1463,12 +1463,13 @@ func (ub *UserBalanceRepo) GetUserRewardTodayTotalByUserId(ctx context.Context, 
 		startDate = now.AddDate(0, 0, -1)
 		endDate = now
 	}
-	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
-	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 15, 59, 59, 0, time.UTC)
+
+	todayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 14, 0, 0, 0, time.UTC)
+	todayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 14, 0, 0, 0, time.UTC)
 
 	if err := ub.data.db.Table("reward").
 		Where("user_id=?", userId).
-		Where("created_at>=?", todayStart).Where("created_at<=?", todayEnd).
+		Where("created_at>=?", todayStart).Where("created_at<?", todayEnd).
 		Select("sum(amount) as total, user_id").
 		Take(&total).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
