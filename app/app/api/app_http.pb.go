@@ -27,6 +27,7 @@ const OperationAppEthAuthorize = "/api.App/EthAuthorize"
 const OperationAppFeeRewardList = "/api.App/FeeRewardList"
 const OperationAppRecommendList = "/api.App/RecommendList"
 const OperationAppRecommendRewardList = "/api.App/RecommendRewardList"
+const OperationAppRecommendUpdate = "/api.App/RecommendUpdate"
 const OperationAppRewardList = "/api.App/RewardList"
 const OperationAppUserInfo = "/api.App/UserInfo"
 const OperationAppWithdraw = "/api.App/Withdraw"
@@ -41,6 +42,7 @@ type AppHTTPServer interface {
 	FeeRewardList(context.Context, *FeeRewardListRequest) (*FeeRewardListReply, error)
 	RecommendList(context.Context, *RecommendListRequest) (*RecommendListReply, error)
 	RecommendRewardList(context.Context, *RecommendRewardListRequest) (*RecommendRewardListReply, error)
+	RecommendUpdate(context.Context, *RecommendUpdateRequest) (*RecommendUpdateReply, error)
 	RewardList(context.Context, *RewardListRequest) (*RewardListReply, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 	Withdraw(context.Context, *WithdrawRequest) (*WithdrawReply, error)
@@ -50,6 +52,7 @@ type AppHTTPServer interface {
 func RegisterAppHTTPServer(s *http.Server, srv AppHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/app_server/eth_authorize", _App_EthAuthorize0_HTTP_Handler(srv))
+	r.POST("/api/app_server/recommend_update", _App_RecommendUpdate0_HTTP_Handler(srv))
 	r.GET("/api/app_server/user_info", _App_UserInfo0_HTTP_Handler(srv))
 	r.GET("/api/app_server/reward_list", _App_RewardList0_HTTP_Handler(srv))
 	r.GET("/api/app_server/recommend_reward_list", _App_RecommendRewardList0_HTTP_Handler(srv))
@@ -81,6 +84,28 @@ func _App_EthAuthorize0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) e
 			return err
 		}
 		reply := out.(*EthAuthorizeReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _App_RecommendUpdate0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RecommendUpdateRequest
+		if err := ctx.Bind(&in.SendBody); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppRecommendUpdate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RecommendUpdate(ctx, req.(*RecommendUpdateRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RecommendUpdateReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -306,6 +331,7 @@ type AppHTTPClient interface {
 	FeeRewardList(ctx context.Context, req *FeeRewardListRequest, opts ...http.CallOption) (rsp *FeeRewardListReply, err error)
 	RecommendList(ctx context.Context, req *RecommendListRequest, opts ...http.CallOption) (rsp *RecommendListReply, err error)
 	RecommendRewardList(ctx context.Context, req *RecommendRewardListRequest, opts ...http.CallOption) (rsp *RecommendRewardListReply, err error)
+	RecommendUpdate(ctx context.Context, req *RecommendUpdateRequest, opts ...http.CallOption) (rsp *RecommendUpdateReply, err error)
 	RewardList(ctx context.Context, req *RewardListRequest, opts ...http.CallOption) (rsp *RewardListReply, err error)
 	UserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *UserInfoReply, err error)
 	Withdraw(ctx context.Context, req *WithdrawRequest, opts ...http.CallOption) (rsp *WithdrawReply, err error)
@@ -418,6 +444,19 @@ func (c *AppHTTPClientImpl) RecommendRewardList(ctx context.Context, in *Recomme
 	opts = append(opts, http.Operation(OperationAppRecommendRewardList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AppHTTPClientImpl) RecommendUpdate(ctx context.Context, in *RecommendUpdateRequest, opts ...http.CallOption) (*RecommendUpdateReply, error) {
+	var out RecommendUpdateReply
+	pattern := "/api/app_server/recommend_update"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAppRecommendUpdate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in.SendBody, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

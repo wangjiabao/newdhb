@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AppClient interface {
 	EthAuthorize(ctx context.Context, in *EthAuthorizeRequest, opts ...grpc.CallOption) (*EthAuthorizeReply, error)
+	RecommendUpdate(ctx context.Context, in *RecommendUpdateRequest, opts ...grpc.CallOption) (*RecommendUpdateReply, error)
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
 	RewardList(ctx context.Context, in *RewardListRequest, opts ...grpc.CallOption) (*RewardListReply, error)
 	RecommendRewardList(ctx context.Context, in *RecommendRewardListRequest, opts ...grpc.CallOption) (*RecommendRewardListReply, error)
@@ -72,6 +73,15 @@ func NewAppClient(cc grpc.ClientConnInterface) AppClient {
 func (c *appClient) EthAuthorize(ctx context.Context, in *EthAuthorizeRequest, opts ...grpc.CallOption) (*EthAuthorizeReply, error) {
 	out := new(EthAuthorizeReply)
 	err := c.cc.Invoke(ctx, "/api.App/EthAuthorize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) RecommendUpdate(ctx context.Context, in *RecommendUpdateRequest, opts ...grpc.CallOption) (*RecommendUpdateReply, error) {
+	out := new(RecommendUpdateReply)
+	err := c.cc.Invoke(ctx, "/api.App/RecommendUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,6 +192,7 @@ func (c *appClient) AdminFee(ctx context.Context, in *AdminFeeRequest, opts ...g
 // for forward compatibility
 type AppServer interface {
 	EthAuthorize(context.Context, *EthAuthorizeRequest) (*EthAuthorizeReply, error)
+	RecommendUpdate(context.Context, *RecommendUpdateRequest) (*RecommendUpdateReply, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 	RewardList(context.Context, *RewardListRequest) (*RewardListReply, error)
 	RecommendRewardList(context.Context, *RecommendRewardListRequest) (*RecommendRewardListReply, error)
@@ -227,6 +238,9 @@ type UnimplementedAppServer struct {
 
 func (UnimplementedAppServer) EthAuthorize(context.Context, *EthAuthorizeRequest) (*EthAuthorizeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EthAuthorize not implemented")
+}
+func (UnimplementedAppServer) RecommendUpdate(context.Context, *RecommendUpdateRequest) (*RecommendUpdateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecommendUpdate not implemented")
 }
 func (UnimplementedAppServer) UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
@@ -288,6 +302,24 @@ func _App_EthAuthorize_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AppServer).EthAuthorize(ctx, req.(*EthAuthorizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_RecommendUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecommendUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).RecommendUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.App/RecommendUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).RecommendUpdate(ctx, req.(*RecommendUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -500,6 +532,10 @@ var App_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EthAuthorize",
 			Handler:    _App_EthAuthorize_Handler,
+		},
+		{
+			MethodName: "RecommendUpdate",
+			Handler:    _App_RecommendUpdate_Handler,
 		},
 		{
 			MethodName: "UserInfo",

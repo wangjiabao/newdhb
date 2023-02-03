@@ -18,6 +18,13 @@ service App {
 		};
 	};
 
+	rpc RecommendUpdate (RecommendUpdateRequest) returns (RecommendUpdateReply) {
+		option (google.api.http) = {
+			post: "/api/app_server/recommend_update"
+			body: "send_body"
+		};
+	};
+
 	rpc UserInfo (UserInfoRequest) returns (UserInfoReply) {
 		option (google.api.http) = {
 			get: "/api/app_server/user_info"
@@ -155,6 +162,17 @@ message EthAuthorizeReply {
 	string token = 1;
 }
 
+message RecommendUpdateRequest {
+	message SendBody{
+		string code = 1;
+	}
+
+	SendBody send_body = 1;
+}
+
+message RecommendUpdateReply {
+	string inviteUserAddress = 1;
+}
 
 message DepositRequest {
 }

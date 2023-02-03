@@ -270,6 +270,241 @@ var _ interface {
 	ErrorName() string
 } = EthAuthorizeReplyValidationError{}
 
+// Validate checks the field values on RecommendUpdateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RecommendUpdateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecommendUpdateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RecommendUpdateRequestMultiError, or nil if none found.
+func (m *RecommendUpdateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecommendUpdateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSendBody()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RecommendUpdateRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RecommendUpdateRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSendBody()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RecommendUpdateRequestValidationError{
+				field:  "SendBody",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return RecommendUpdateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecommendUpdateRequestMultiError is an error wrapping multiple validation
+// errors returned by RecommendUpdateRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RecommendUpdateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecommendUpdateRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecommendUpdateRequestMultiError) AllErrors() []error { return m }
+
+// RecommendUpdateRequestValidationError is the validation error returned by
+// RecommendUpdateRequest.Validate if the designated constraints aren't met.
+type RecommendUpdateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecommendUpdateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecommendUpdateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecommendUpdateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecommendUpdateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecommendUpdateRequestValidationError) ErrorName() string {
+	return "RecommendUpdateRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecommendUpdateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecommendUpdateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecommendUpdateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecommendUpdateRequestValidationError{}
+
+// Validate checks the field values on RecommendUpdateReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RecommendUpdateReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecommendUpdateReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RecommendUpdateReplyMultiError, or nil if none found.
+func (m *RecommendUpdateReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecommendUpdateReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for InviteUserAddress
+
+	if len(errors) > 0 {
+		return RecommendUpdateReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecommendUpdateReplyMultiError is an error wrapping multiple validation
+// errors returned by RecommendUpdateReply.ValidateAll() if the designated
+// constraints aren't met.
+type RecommendUpdateReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecommendUpdateReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecommendUpdateReplyMultiError) AllErrors() []error { return m }
+
+// RecommendUpdateReplyValidationError is the validation error returned by
+// RecommendUpdateReply.Validate if the designated constraints aren't met.
+type RecommendUpdateReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecommendUpdateReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecommendUpdateReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecommendUpdateReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecommendUpdateReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecommendUpdateReplyValidationError) ErrorName() string {
+	return "RecommendUpdateReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecommendUpdateReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecommendUpdateReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecommendUpdateReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecommendUpdateReplyValidationError{}
+
 // Validate checks the field values on DepositRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -5061,6 +5296,111 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = EthAuthorizeRequest_SendBodyValidationError{}
+
+// Validate checks the field values on RecommendUpdateRequest_SendBody with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RecommendUpdateRequest_SendBody) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecommendUpdateRequest_SendBody with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// RecommendUpdateRequest_SendBodyMultiError, or nil if none found.
+func (m *RecommendUpdateRequest_SendBody) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecommendUpdateRequest_SendBody) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	if len(errors) > 0 {
+		return RecommendUpdateRequest_SendBodyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecommendUpdateRequest_SendBodyMultiError is an error wrapping multiple
+// validation errors returned by RecommendUpdateRequest_SendBody.ValidateAll()
+// if the designated constraints aren't met.
+type RecommendUpdateRequest_SendBodyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecommendUpdateRequest_SendBodyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecommendUpdateRequest_SendBodyMultiError) AllErrors() []error { return m }
+
+// RecommendUpdateRequest_SendBodyValidationError is the validation error
+// returned by RecommendUpdateRequest_SendBody.Validate if the designated
+// constraints aren't met.
+type RecommendUpdateRequest_SendBodyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecommendUpdateRequest_SendBodyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecommendUpdateRequest_SendBodyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecommendUpdateRequest_SendBodyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecommendUpdateRequest_SendBodyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecommendUpdateRequest_SendBodyValidationError) ErrorName() string {
+	return "RecommendUpdateRequest_SendBodyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecommendUpdateRequest_SendBodyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecommendUpdateRequest_SendBody.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecommendUpdateRequest_SendBodyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecommendUpdateRequest_SendBodyValidationError{}
 
 // Validate checks the field values on UserInfoReply_List with the rules
 // defined in the proto definition for this message. If any rules are

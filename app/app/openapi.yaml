@@ -185,6 +185,30 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/app_server/recommend_update:
+        post:
+            tags:
+                - App
+            operationId: App_RecommendUpdate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RecommendUpdateRequest_SendBody'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RecommendUpdateReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/app_server/reward_list:
         get:
             tags:
@@ -352,6 +376,16 @@ components:
                 type:
                     type: string
                 reason:
+                    type: string
+        RecommendUpdateReply:
+            type: object
+            properties:
+                inviteUserAddress:
+                    type: string
+        RecommendUpdateRequest_SendBody:
+            type: object
+            properties:
+                code:
                     type: string
         RewardListReply:
             type: object

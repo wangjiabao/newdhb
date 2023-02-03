@@ -545,6 +545,27 @@ func (ur *UserRecommendRepo) CreateUserRecommend(ctx context.Context, u *biz.Use
 	}, nil
 }
 
+// UpdateUserRecommend .
+func (ur *UserRecommendRepo) UpdateUserRecommend(ctx context.Context, u *biz.User, recommendUser *biz.UserRecommend) (bool, error) {
+	var tmpRecommendCode string
+	if nil != recommendUser && 0 < recommendUser.UserId {
+		tmpRecommendCode = "D" + strconv.FormatInt(recommendUser.UserId, 10)
+		if "" != recommendUser.RecommendCode {
+			tmpRecommendCode = recommendUser.RecommendCode + tmpRecommendCode
+		}
+	}
+
+	var userRecommend UserRecommend
+	userRecommend.RecommendCode = tmpRecommendCode
+
+	res := ur.data.DB(ctx).Table("user_recommend").Where("user_id", u.ID).Updates(&userRecommend)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_USER_RECOMMEND_ERROR", "用户推荐关系修改失败")
+	}
+
+	return true, nil
+}
+
 // CreateUserBalance .
 func (ub UserBalanceRepo) CreateUserBalance(ctx context.Context, u *biz.User) (*biz.UserBalance, error) {
 	var userBalance UserBalance
