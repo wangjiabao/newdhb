@@ -17,6 +17,14 @@ type User struct {
 	UpdatedAt time.Time `gorm:"type:datetime;not null"`
 }
 
+type UserArea struct {
+	ID         int64
+	UserId     int64
+	Amount     int64
+	SelfAmount int64
+	Level      int64
+}
+
 type UserInfo struct {
 	ID               int64     `gorm:"primarykey;type:int"`
 	UserId           int64     `gorm:"type:int;not null"`
@@ -467,6 +475,32 @@ func (ur *UserRecommendRepo) GetUserRecommendByUserId(ctx context.Context, userI
 		UserId:        userRecommend.UserId,
 		RecommendCode: userRecommend.RecommendCode,
 	}, nil
+}
+
+// GetUserAreas .
+func (ur *UserRecommendRepo) GetUserAreas(ctx context.Context, userIds []int64) ([]*biz.UserArea, error) {
+
+	var userAreas []*UserArea
+	if err := ur.data.db.Where("user_id in (?)", userIds).Table("user_area").Find(&userAreas).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New(500, "USER AREA NOT FOUND", err.Error())
+		}
+
+		return nil, errors.New(500, "USER AREA ERROR", err.Error())
+	}
+
+	res := make([]*biz.UserArea, 0)
+	for _, v := range userAreas {
+		res = append(res, &biz.UserArea{
+			ID:         v.ID,
+			UserId:     v.UserId,
+			Amount:     v.Amount,
+			SelfAmount: v.SelfAmount,
+			Level:      v.Level,
+		})
+	}
+
+	return res, nil
 }
 
 // GetUserRecommendByCode .
