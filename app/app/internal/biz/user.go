@@ -164,6 +164,7 @@ type UserRecommendRepo interface {
 	GetUserRecommendByCode(ctx context.Context, code string) ([]*UserRecommend, error)
 	GetUserRecommendLikeCode(ctx context.Context, code string) ([]*UserRecommend, error)
 	GetUserAreas(ctx context.Context, userIds []int64) ([]*UserArea, error)
+	CreateUserArea(ctx context.Context, u *User) (bool, error)
 }
 
 type UserCurrentMonthRecommendRepo interface {
@@ -258,6 +259,11 @@ func (uuc *UserUseCase) GetExistUserByAddressOrCreate(ctx context.Context, u *Us
 			}
 
 			userRecommend, err = uuc.urRepo.CreateUserRecommend(ctx, user, recommendUser) // 创建用户信息
+			if err != nil {
+				return err
+			}
+
+			_, err = uuc.urRepo.CreateUserArea(ctx, user)
 			if err != nil {
 				return err
 			}

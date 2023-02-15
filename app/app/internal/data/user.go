@@ -477,6 +477,19 @@ func (ur *UserRecommendRepo) GetUserRecommendByUserId(ctx context.Context, userI
 	}, nil
 }
 
+// CreateUserArea .
+func (ur *UserRecommendRepo) CreateUserArea(ctx context.Context, u *biz.User) (bool, error) {
+	// 业务上限制了错误的上一级未insert下一级优先insert的情况
+	var userArea UserArea
+	userArea.UserId = u.ID
+	res := ur.data.DB(ctx).Table("user_area").Create(&userArea)
+	if res.Error != nil {
+		return false, errors.New(500, "CREATE_USER_AREA_ERROR", "用户区信息创建失败")
+	}
+
+	return true, nil
+}
+
 // GetUserAreas .
 func (ur *UserRecommendRepo) GetUserAreas(ctx context.Context, userIds []int64) ([]*biz.UserArea, error) {
 
