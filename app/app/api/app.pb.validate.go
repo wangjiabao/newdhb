@@ -932,6 +932,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for AreaMaxAmount
 
+	// no validation rules for AreaName
+
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
 	}

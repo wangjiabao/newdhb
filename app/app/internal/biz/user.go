@@ -165,6 +165,7 @@ type UserRecommendRepo interface {
 	GetUserRecommendLikeCode(ctx context.Context, code string) ([]*UserRecommend, error)
 	GetUserAreas(ctx context.Context, userIds []int64) ([]*UserArea, error)
 	CreateUserArea(ctx context.Context, u *User) (bool, error)
+	GetUserArea(ctx context.Context, userId int64) (*UserArea, error)
 }
 
 type UserCurrentMonthRecommendRepo interface {
@@ -399,16 +400,25 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		locationCount int64
 		poolAmount    int64
 		//systemYesterdayreward    *Reward
-		userTodayRewardTotal *UserSortRecommendReward
-		userTodayReward      int64
-		recommendTop         int64
-		fybPrice             string
-		fybRate              string
-		locationRowConfig    = int64(20)
-		areaAmount           int64
-		maxAreaAmount        int64
-		recommendAreaTotal   int64
-		err                  error
+		userTodayRewardTotal   *UserSortRecommendReward
+		userTodayReward        int64
+		recommendTop           int64
+		fybPrice               string
+		fybRate                string
+		locationRowConfig      = int64(20)
+		areaAmount             int64
+		maxAreaAmount          int64
+		recommendAreaTotal     int64
+		recommendAreaOne       int64
+		recommendAreaTwo       int64
+		recommendAreaThree     int64
+		recommendAreaFour      int64
+		recommendAreaOneName   string
+		recommendAreaTwoName   string
+		recommendAreaThreeName string
+		recommendAreaFourName  string
+		areaName               string
+		err                    error
 	)
 
 	myUser, err = uuc.repo.GetUserById(ctx, user.ID)
@@ -522,7 +532,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	}
 
 	// 配置
-	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count", "fyb_price", "fyb_rate")
+	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count", "fyb_price", "fyb_rate", "recommend_area_one", "recommend_area_two", "recommend_area_three", "recommend_area_four")
 	if nil != configs {
 		for _, vConfig := range configs {
 			if "user_count" == vConfig.KeyName {
@@ -537,6 +547,23 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			if "location_row" == vConfig.KeyName {
 				locationRowConfig, _ = strconv.ParseInt(vConfig.Value, 10, 64)
 			}
+			if "recommend_area_one" == vConfig.KeyName {
+				recommendAreaOne, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+				recommendAreaOneName = vConfig.Name
+			}
+			if "recommend_area_two" == vConfig.KeyName {
+				recommendAreaTwo, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+				recommendAreaTwoName = vConfig.Name
+			}
+			if "recommend_area_three" == vConfig.KeyName {
+				recommendAreaThree, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+				recommendAreaThreeName = vConfig.Name
+			}
+			if "recommend_area_four" == vConfig.KeyName {
+				recommendAreaFour, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+				recommendAreaFourName = vConfig.Name
+			}
+
 		}
 	}
 
@@ -628,6 +655,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				myRecommendUserIds = append(myRecommendUserIds, vMyRecommendUsers.UserId)
 			}
 		}
+
 		if 0 < len(myRecommendUserIds) {
 			userAreas, err = uuc.urRepo.GetUserAreas(ctx, myRecommendUserIds)
 			if nil == err {
@@ -644,6 +672,41 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 				areaAmount = tmpTotalAreaAmount - maxAreaAmount
 			}
+
+			// 比较级别
+			if areaAmount >= recommendAreaOne {
+				areaName = recommendAreaOneName
+			}
+
+			if areaAmount >= recommendAreaTwo {
+				areaName = recommendAreaTwoName
+			}
+
+			if areaAmount >= recommendAreaThree {
+				areaName = recommendAreaThreeName
+			}
+
+			if areaAmount >= recommendAreaFour {
+				areaName = recommendAreaFourName
+			}
+		}
+
+	}
+	// 优先展示设定的
+	var myUserArea *UserArea
+	myUserArea, err = uuc.urRepo.GetUserArea(ctx, user.ID)
+	if nil != myUserArea && 0 < myUserArea.Level {
+		if myUserArea.Level >= 1 {
+			areaName = recommendAreaOneName
+		}
+		if myUserArea.Level >= 2 {
+			areaName = recommendAreaTwoName
+		}
+		if myUserArea.Level >= 3 {
+			areaName = recommendAreaThreeName
+		}
+		if myUserArea.Level >= 4 {
+			areaName = recommendAreaFourName
 		}
 	}
 
@@ -689,6 +752,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		AreaAmount:         strconv.FormatInt(areaAmount, 10),
 		AreaMaxAmount:      strconv.FormatInt(maxAreaAmount, 10),
 		RecommendAreaTotal: fmt.Sprintf("%.2f", float64(recommendAreaTotal)/float64(10000000000)),
+		AreaName:           areaName,
 	}, nil
 }
 

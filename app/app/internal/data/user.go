@@ -490,6 +490,27 @@ func (ur *UserRecommendRepo) CreateUserArea(ctx context.Context, u *biz.User) (b
 	return true, nil
 }
 
+// GetUserArea .
+func (ur *UserRecommendRepo) GetUserArea(ctx context.Context, userId int64) (*biz.UserArea, error) {
+
+	var userArea *UserArea
+	if err := ur.data.db.Where("user_id=?", userId).Table("user_area").First(&userArea).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New(500, "USER AREA NOT FOUND", err.Error())
+		}
+
+		return nil, errors.New(500, "USER AREA ERROR", err.Error())
+	}
+
+	return &biz.UserArea{
+		ID:         userArea.ID,
+		UserId:     userArea.UserId,
+		Amount:     userArea.Amount,
+		SelfAmount: userArea.SelfAmount,
+		Level:      userArea.Level,
+	}, nil
+}
+
 // GetUserAreas .
 func (ur *UserRecommendRepo) GetUserAreas(ctx context.Context, userIds []int64) ([]*biz.UserArea, error) {
 

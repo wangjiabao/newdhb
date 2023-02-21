@@ -508,6 +508,8 @@ components:
                     type: string
                 areaMaxAmount:
                     type: string
+                areaName:
+                    type: string
         UserInfoReply_List:
             type: object
             properties:
