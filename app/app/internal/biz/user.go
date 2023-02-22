@@ -413,6 +413,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		recommendAreaTwo       int64
 		recommendAreaThree     int64
 		recommendAreaFour      int64
+		locationDailyTotal     int64
 		recommendAreaOneName   string
 		recommendAreaTwoName   string
 		recommendAreaThreeName string
@@ -527,6 +528,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				recommendVipTotal += vUserReward.Amount
 			} else if "daily_recommend_area" == vUserReward.Reason {
 				recommendAreaTotal += vUserReward.Amount
+			} else if "location_daily_reward" == vUserReward.Reason {
+				locationDailyTotal += vUserReward.Amount
 			}
 		}
 	}
@@ -721,37 +724,38 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		Level:              userInfo.Vip,
 		Status:             status,
 		Amount:             amount,
-		RecommendVipTotal:  fmt.Sprintf("%.2f", float64(recommendVipTotal)/float64(10000000000)),
-		FeeDaily:           fmt.Sprintf("%.2f", float64(feeDaily)/float64(10000000000)),
-		BalanceUsdt:        fmt.Sprintf("%.2f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
-		BalanceDhb:         fmt.Sprintf("%.2f", float64(userBalance.BalanceDhb)/float64(10000000000)),
+		RecommendVipTotal:  fmt.Sprintf("%.3f", float64(recommendVipTotal)/float64(10000000000)),
+		FeeDaily:           fmt.Sprintf("%.3f", float64(feeDaily)/float64(10000000000)),
+		BalanceUsdt:        fmt.Sprintf("%.3f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
+		BalanceDhb:         fmt.Sprintf("%.3f", float64(userBalance.BalanceDhb)/float64(10000000000)),
 		InviteUrl:          encodeString,
 		InviteUserAddress:  inviteUserAddress,
 		RecommendNum:       userInfo.HistoryRecommend,
 		RecommendTeamNum:   recommendTeamNum,
-		Total:              fmt.Sprintf("%.2f", float64(userRewardTotal)/float64(10000000000)),
-		WithdrawAmount:     fmt.Sprintf("%.2f", float64(withdrawAmount)/float64(10000000000)),
+		Total:              fmt.Sprintf("%.3f", float64(userRewardTotal)/float64(10000000000)),
+		WithdrawAmount:     fmt.Sprintf("%.3f", float64(withdrawAmount)/float64(10000000000)),
 		Row:                rowNum,
 		Col:                colNum,
-		RecommendTotal:     fmt.Sprintf("%.2f", float64(recommendTotal)/float64(10000000000)),
-		LocationTotal:      fmt.Sprintf("%.2f", float64(locationTotal)/float64(10000000000)),
+		RecommendTotal:     fmt.Sprintf("%.3f", float64(recommendTotal)/float64(10000000000)),
+		LocationTotal:      fmt.Sprintf("%.3f", float64(locationTotal)/float64(10000000000)),
+		LocationDailyTotal: fmt.Sprintf("%.3f", float64(locationDailyTotal)/float64(10000000000)),
 		Usdt:               "0x55d398326f99059fF775485246999027B3197955",
 		Account:            "0x12ad46402226ebf2b5dff48485bd0b1eb84cabce",
-		AmountB:            fmt.Sprintf("%.2f", float64(myLastLocationCurrent)/float64(10000000000)),
+		AmountB:            fmt.Sprintf("%.3f", float64(myLastLocationCurrent)/float64(10000000000)),
 		UserCount:          userCount,
-		TotalDeposit:       fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
-		PoolAmount:         fmt.Sprintf("%.2f", float64(poolAmount)/float64(10000000000)),
+		TotalDeposit:       fmt.Sprintf("%.3f", float64(totalDepoist)/float64(10000000000)),
+		PoolAmount:         fmt.Sprintf("%.3f", float64(poolAmount)/float64(10000000000)),
 		TopUser:            topUsersReply,
 		LocationCount:      locationCount,
-		TodayReward:        fmt.Sprintf("%.2f", float64(userTodayReward)/float64(10000000000)),
-		RecommendTop:       fmt.Sprintf("%.2f", float64(recommendTop)/float64(10000000000)),
-		LocationTotalCol:   fmt.Sprintf("%.2f", float64(locationTotalCol)/float64(10000000000)),
-		LocationTotalRow:   fmt.Sprintf("%.2f", float64(locationTotalRow)/float64(10000000000)),
+		TodayReward:        fmt.Sprintf("%.3f", float64(userTodayReward)/float64(10000000000)),
+		RecommendTop:       fmt.Sprintf("%.3f", float64(recommendTop)/float64(10000000000)),
+		LocationTotalCol:   fmt.Sprintf("%.3f", float64(locationTotalCol)/float64(10000000000)),
+		LocationTotalRow:   fmt.Sprintf("%.3f", float64(locationTotalRow)/float64(10000000000)),
 		FybPrice:           fybPrice,
 		FybRate:            fybRate,
 		AreaAmount:         strconv.FormatInt(areaAmount, 10),
 		AreaMaxAmount:      strconv.FormatInt(maxAreaAmount, 10),
-		RecommendAreaTotal: fmt.Sprintf("%.2f", float64(recommendAreaTotal)/float64(10000000000)),
+		RecommendAreaTotal: fmt.Sprintf("%.3f", float64(recommendAreaTotal)/float64(10000000000)),
 		AreaName:           areaName,
 	}, nil
 }

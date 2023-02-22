@@ -510,6 +510,8 @@ components:
                     type: string
                 areaName:
                     type: string
+                locationDailyTotal:
+                    type: string
         UserInfoReply_List:
             type: object
             properties:

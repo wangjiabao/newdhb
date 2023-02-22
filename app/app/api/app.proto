@@ -228,6 +228,7 @@ message UserInfoReply {
 	string recommendAreaTotal = 43;
 	string areaMaxAmount = 44;
 	string areaName = 45;
+	string locationDailyTotal = 46;
 }
 
 message RewardListRequest {
